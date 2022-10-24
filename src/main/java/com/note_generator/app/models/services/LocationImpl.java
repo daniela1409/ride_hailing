@@ -1,11 +1,10 @@
 package com.note_generator.app.models.services;
 
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.note_generator.app.models.dao.LocationDao;
+import com.note_generator.app.models.dto.LocationDTO;
 import com.note_generator.app.models.entity.Location;
 
 @Service
@@ -15,12 +14,12 @@ public class LocationImpl implements ILocation {
 	private LocationDao locationDao;
 
 	@Override
-	public Location saveLocation(Map<String, String> location) {
+	public Location saveLocation(LocationDTO location) {
 		Location locationCreated;
 		try {
 			locationCreated = new Location();
-			locationCreated.setLatitude(location.get("latitude"));
-			locationCreated.setLongitude(location.get("longitude"));
+			locationCreated.setLatitude(location.getLatitude());
+			locationCreated.setLongitude(location.getLongitude());
 			this.save(locationCreated);
 		}
 		catch(Exception e) {

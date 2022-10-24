@@ -24,26 +24,26 @@ public class RideImpl implements IRide {
 	@Override
 	public Boolean initRide(Integer userId, Location location) {
 
-		List<User> users = new ArrayList<>();;
+		List<User> users = new ArrayList<>();
 		Boolean response = false;
-		try {
-			User user = IUser.getUser(userId);
-			if (user.getRole().equals("rider")) {
-				users.add(user);
+		User user = IUser.getUser(userId);
 
-				Ride ride = new Ride();
-				ride.setLocation(location);
-				ride.setStatus("inited");
-				ride.setUser(users);
-				saveRide(ride);
+		if (user == null) {
+			throw new RuntimeException("User doesn't exist");
+		}
 
-				response = true;
-			}
+		if (!user.getRole().equals("rider")) {
+			throw new RuntimeException("Check role of user");
 		}
-		catch(Exception e){
-			response = false;
-		}
-		
+
+		Ride ride = new Ride();
+		ride.setLocation(location);
+		ride.setStatus("inited");
+		ride.setUser(users);
+		saveRide(ride);
+
+		response = true;
+
 		return response;
 
 	}
