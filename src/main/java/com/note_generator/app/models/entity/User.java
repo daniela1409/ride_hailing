@@ -37,6 +37,9 @@ public class User {
 	private String role;
 
 	private String status;
+	
+	@Column(name = "last_service")
+	private Date lastService;
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "pay_method_id", referencedColumnName = "id")
@@ -149,5 +152,14 @@ public class User {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+
+    public Date getLastService() {
+        return lastService;
+    }
+
+    public void setLastService(Date lastService) {
+        this.lastService = lastService;
+    }
+	
 
 }

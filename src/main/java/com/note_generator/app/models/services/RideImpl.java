@@ -15,63 +15,110 @@ import com.note_generator.app.models.entity.User;
 @Service
 public class RideImpl implements IRide {
 
-	@Autowired
-	private RideDao rideDao;
+    @Autowired
+    private RideDao rideDao;
 
-	@Autowired
-	private IUser IUser;
+    @Autowired
+    private IUser iUser;
 
-	@Override
-	public Boolean initRide(Integer userId, Location location) {
+    @Override
+    public Boolean initRide(Integer userId, Location location) {
 
-		List<User> users = new ArrayList<>();
-		Boolean response = false;
-		User user = IUser.getUser(userId);
+        List<User> users = new ArrayList<>();
+        User rider = iUser.getUser(userId);
+        User driver = this.findAUserFree();
 
-		if (user == null) {
-			throw new RuntimeException("User doesn't exist");
-		}
+        if (rider == null) {
+            throw new RuntimeException("User doesn't exist");
+        }
+        if (driver == null) {
+            throw new RuntimeException("Drivers are not available");
+        }
 
-		if (!user.getRole().equals("rider")) {
-			throw new RuntimeException("Check role of user");
-		}
+        if (!rider.getRole().equals("rider")) {
+            throw new RuntimeException("Check role of user");
+        }
+        
+        if(rider.getStatus().equals("init_ride")) {
+            throw new RuntimeException("User already in ride");
+        }
 
-		Ride ride = new Ride();
-		ride.setLocation(location);
-		ride.setStatus("inited");
-		ride.setUser(users);
-		saveRide(ride);
+        users.add(rider);
+        users.add(driver);
 
-		response = true;
+        Ride ride = new Ride();
+        ride.setLocation(location);
+        ride.setStatus("inited");
+        ride.setUser(users);
+        saveRide(ride);
 
-		return response;
+        rider.setRide(ride);
+        rider.setStatus("init_ride");
+        driver.setRide(ride);
+        driver.setLastService(new Date());
+        driver.setStatus("busy");
+        iUser.save(rider);
+        iUser.save(driver);
 
-	}
+        return true;
 
-	@Override
-	public Boolean finishRide(Integer userId, Integer rideId) {
+    }
 
-		Boolean finished = false;
-		try {
-			Ride ride = rideDao.findById(rideId).orElse(null);
-			for (User user : ride.getUser()) {
-				if (user.getId() == userId && user.getRole() == "driver") {
-					ride.setStatus("finished");
-					ride.setUpdateAt(new Date());
-					finished = true;
-					this.saveRide(ride);
-				}
-			}
-		} catch (Exception e) {
-			finished = false;
-		}
-		return finished;
+    @Override
+    public Boolean finishRide(Integer userId, Integer rideId) {
 
-	}
+        Ride ride = rideDao.findById(rideId).orElse(null);
 
-	@Override
-	public void saveRide(Ride ride) {
-		rideDao.save(ride);
-	}
+        boolean finished = false;
+
+        if (ride == null) {
+            throw new RuntimeException("Rite does not exist");
+        }
+        if (ride.getStatus().equals("finished")) {
+            throw new RuntimeException("Rite was already done");
+        }
+
+        String conca = "";
+
+        for (User user : ride.getUser()) {
+            if (user.getId() == userId ) {
+                if(user.getRole().equals("driver")) {
+                    ride.setStatus("finished");
+                    conca = conca + ride.getStatus() + " ";
+                    ride.setUpdateAt(new Date());
+                    this.saveRide(ride);
+
+                    user.setStatus("free");
+                    iUser.save(user);
+                }
+                finished = true;
+            }
+            if(user.getRole().equals("rider")) {
+                user.setStatus("finish_ride");
+                iUser.save(user);
+            }
+        }
+
+        return finished;
+    }
+
+    @Override
+    public void saveRide(Ride ride) {
+        rideDao.save(ride);
+    }
+
+    @Override
+    public User findAUserFree() {
+
+        List<User> users = iUser.getDriverFree();
+        Integer usersSize = users.size();
+        User user = null;
+
+        if (usersSize != 0) {
+            user = users.get(0);
+        }
+
+        return user;
+    }
 
 }

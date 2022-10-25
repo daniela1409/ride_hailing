@@ -9,7 +9,7 @@ import com.note_generator.app.models.entity.User;
 
 public interface UserDao extends CrudRepository<User, Integer>{
 	
-	@Query("select u from User u")
-	public List<User> findByRoleAnStatus(String term);
+	@Query("select u from User u where u.role='driver' and u.status='free' order by u.lastService ASC")
+	public List<User> findFreeDriver();
 
 }
