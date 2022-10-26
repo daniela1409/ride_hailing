@@ -8,5 +8,5 @@ import com.note_generator.app.models.entity.Location;
 public interface ILocation {
 
 	public Location saveLocation(LocationDTO location);
-	public void save(Location location);
+	public Location save(Location location);
 }

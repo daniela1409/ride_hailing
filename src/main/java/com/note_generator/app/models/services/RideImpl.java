@@ -68,7 +68,7 @@ public class RideImpl implements IRide {
     public Boolean finishRide(Integer userId, Integer rideId) {
 
         Ride ride = rideDao.findById(rideId).orElse(null);
-
+        
         boolean finished = false;
 
         if (ride == null) {
@@ -103,8 +103,8 @@ public class RideImpl implements IRide {
     }
 
     @Override
-    public void saveRide(Ride ride) {
-        rideDao.save(ride);
+    public Ride saveRide(Ride ride) {
+        return rideDao.save(ride);
     }
 
     @Override

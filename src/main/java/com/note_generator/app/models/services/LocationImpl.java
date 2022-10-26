@@ -29,7 +29,7 @@ public class LocationImpl implements ILocation {
 	}
 
 	@Override
-	public void save(Location location) {
-		locationDao.save(location);
+	public Location save(Location location) {
+		return locationDao.save(location);
 	}
 }
