@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.note_generator.app.models.dto.LocationDTO;
+import com.note_generator.app.models.dto.PayMethodDTO;
 import com.note_generator.app.models.entity.Location;
 import com.note_generator.app.models.entity.Ride;
 import com.note_generator.app.models.entity.User;
@@ -25,6 +26,7 @@ import com.note_generator.app.models.services.IRide;
 import com.note_generator.app.models.services.IUser;
 
 @RestController
+@RequestMapping("api/v1")
 public class rideHailingController {
 
 	@Autowired
@@ -45,15 +47,17 @@ public class rideHailingController {
 
 		try {
 			if (result.hasErrors()) {
-				response = "There is error";
+			    throw new RuntimeException("There is error");
 			}
 
 			locationCreated = iLocation.saveLocation(location);
-			Boolean ride = iRide.initRide(userId, locationCreated);
+			Ride ride = iRide.initRide(userId, locationCreated);
+			
 
-			if (!ride) {
-				response = "Ride inited";
+			if (ride != null) {
+			    throw new RuntimeException("Ride already inited");
 			}
+			
 		} catch (RuntimeException e) {
 			response = e.getMessage();
 		}
@@ -63,10 +67,10 @@ public class rideHailingController {
 	}
 
 	@PutMapping(value = "/ride/finish/{userId}/{rideId}")
-	public String finishRide(@PathVariable Integer userId, @PathVariable Integer rideId) {
-	            
+	public String finishRide(@PathVariable Integer userId, @PathVariable Integer rideId, @RequestBody Map<String, String> data) {
+	           
+	    //String response = data.get("km");
 	    String response = "";
-	    
 	    
         try 
         { 

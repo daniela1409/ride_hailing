@@ -22,7 +22,7 @@ public class RideImpl implements IRide {
     private IUser iUser;
 
     @Override
-    public Boolean initRide(Integer userId, Location location) {
+    public Ride initRide(Integer userId, Location location) {
 
         List<User> users = new ArrayList<>();
         User rider = iUser.getUser(userId);
@@ -60,7 +60,7 @@ public class RideImpl implements IRide {
         iUser.save(rider);
         iUser.save(driver);
 
-        return true;
+        return ride;
 
     }
 

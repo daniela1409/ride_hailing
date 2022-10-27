@@ -7,7 +7,7 @@ import com.note_generator.app.models.entity.User;
 
 public interface IRide {
 
-	public Boolean initRide(Integer userId, Location location);
+	public Ride initRide(Integer userId, Location location);
 	public Ride saveRide(Ride ride);
 	public Boolean finishRide(Integer userId, Integer rideId);
 	public User findAUserFree();
