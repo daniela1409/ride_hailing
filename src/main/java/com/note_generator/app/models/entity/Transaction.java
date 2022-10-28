@@ -5,11 +5,10 @@ import java.util.Date;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
 @Entity
@@ -17,17 +16,13 @@ import javax.persistence.Table;
 public class Transaction {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private String id;
 
     @Column(name = "amount_in_cents")
     private Integer amountInCents;
     private String currency;
     private String reference;
     private Integer installments;
-
-    @Column(name = "payment_source_id")
-    private Integer paymentSourceId;
 
     @Column(name = "create_at")
     private Date createAt;
@@ -38,16 +33,16 @@ public class Transaction {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "ride_id", referencedColumnName = "id")
     private Ride ride;
-    
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "pay_method_id", referencedColumnName = "id")
     private PayMethod payMethod;
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -107,12 +102,17 @@ public class Transaction {
         this.installments = installments;
     }
 
-    public Integer getPaymentSourceId() {
-        return paymentSourceId;
+    public PayMethod getPayMethod() {
+        return payMethod;
     }
 
-    public void setPaymentSourceId(Integer paymentSourceId) {
-        this.paymentSourceId = paymentSourceId;
+    public void setPayMethod(PayMethod payMethod) {
+        this.payMethod = payMethod;
+    }
+    
+    @PrePersist
+    public void prePersist() {
+        createAt = new Date();
     }
 
 }

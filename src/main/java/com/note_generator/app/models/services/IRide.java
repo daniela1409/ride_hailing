@@ -9,7 +9,7 @@ public interface IRide {
 
 	public Ride initRide(Integer userId, Location location);
 	public Ride saveRide(Ride ride);
-	public Boolean finishRide(Integer userId, Integer rideId);
+	public User finishRide(Integer userId, Integer rideId);
 	public User findAUserFree();
 	
 }

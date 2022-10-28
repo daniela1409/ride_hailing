@@ -65,11 +65,10 @@ public class RideImpl implements IRide {
     }
 
     @Override
-    public Boolean finishRide(Integer userId, Integer rideId) {
+    public User finishRide(Integer userId, Integer rideId) {
 
         Ride ride = rideDao.findById(rideId).orElse(null);
-        
-        boolean finished = false;
+        User rider = null;
 
         if (ride == null) {
             throw new RuntimeException("Rite does not exist");
@@ -77,29 +76,26 @@ public class RideImpl implements IRide {
         if (ride.getStatus().equals("finished")) {
             throw new RuntimeException("Rite was already done");
         }
-
-        String conca = "";
-
+        
         for (User user : ride.getUser()) {
             if (user.getId() == userId ) {
                 if(user.getRole().equals("driver")) {
                     ride.setStatus("finished");
-                    conca = conca + ride.getStatus() + " ";
                     ride.setUpdateAt(new Date());
                     this.saveRide(ride);
 
                     user.setStatus("free");
                     iUser.save(user);
                 }
-                finished = true;
             }
             if(user.getRole().equals("rider")) {
                 user.setStatus("finish_ride");
+                rider = user;
                 iUser.save(user);
             }
         }
 
-        return finished;
+        return rider;
     }
 
     @Override

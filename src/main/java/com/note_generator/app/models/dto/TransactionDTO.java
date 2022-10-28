@@ -15,9 +15,9 @@ public class TransactionDTO {
     public Integer getAmount_in_cents() {
         return amount_in_cents;
     }
-
-    public void setAmount_in_cents(Integer amount_in_cents) {
-        this.amount_in_cents = amount_in_cents;
+    
+    public void setAmount_in_cents(Integer kms, Integer time) {
+        this.amount_in_cents =  3500 + (kms*1000) + (time*200);
     }
 
     public String getCurrency() {
@@ -51,6 +51,6 @@ public class TransactionDTO {
     public void setPayment_source_id(Integer payment_source_id) {
         this.payment_source_id = payment_source_id;
     }
-    
+
 
 }

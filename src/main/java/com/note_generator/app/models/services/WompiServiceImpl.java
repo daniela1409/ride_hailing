@@ -6,14 +6,12 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.note_generator.app.models.dao.PayMethodDao;
 import com.note_generator.app.models.dto.PayMethodDTO;
 import com.note_generator.app.models.dto.TransactionDTO;
+import com.note_generator.app.models.entity.User;
 
 @Service
 public class WompiServiceImpl implements IWompiService {
@@ -58,23 +56,33 @@ public class WompiServiceImpl implements IWompiService {
 
     @SuppressWarnings("null")
     @Override
-    public JsonNode CreateTransaction(TransactionDTO transactionDTO) {
+    public JsonNode createTransaction(TransactionDTO transactionDTO, User user) {
         String fullPath = baseUrl + "/transactions";
 
         HttpHeaders requestHeaders = new HttpHeaders();
         requestHeaders.add("Authorization", "Bearer " + privateKey);
         String requestJson = "{\"amount_in_cents\": " + transactionDTO.getAmount_in_cents() +
                 ", \"currency\": \"" + transactionDTO.getCurrency() + "\"" +
-                ", \"customer_email\": " + "\"jedagos@gamil.com\" " +
+                ", \"customer_email\": \"" + user.getEmail() + "\"" +
                 ", \"payment_method\": {\"installments\": " + transactionDTO.getInstallments() + "}" +
                 ", \"reference\" : \"" + transactionDTO.getReference() + "\"" +
-                ", \"payment_source_id\": " + transactionDTO.getPayment_source_id() + "}";
+                ", \"payment_source_id\": " + user.getPayMethod().getId() + "}";
 
         HttpEntity<?> httpEntity = new HttpEntity<String>(requestJson, requestHeaders);
         JsonNode transaction = restTemplate.exchange(fullPath, HttpMethod.POST, httpEntity, JsonNode.class).getBody()
                 .get("data");
-        
+
         return transaction;
+    }
+
+    @SuppressWarnings("null")
+    @Override
+    public String seeStatusTransaction(String transactionId) {
+        String fullPath = baseUrl + "/transactions/{transactionId}";
+        String statusTransaction = restTemplate.getForEntity(fullPath, JsonNode.class, transactionId).getBody().get("data")
+                .get("status").asText();
+        
+        return statusTransaction;
     }
 
 }

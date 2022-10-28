@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.note_generator.app.models.dto.PayMethodDTO;
-import com.note_generator.app.models.dto.TransactionDTO;
 import com.note_generator.app.models.entity.PayMethod;
 import com.note_generator.app.models.entity.User;
 import com.note_generator.app.models.services.IPayMethods;
@@ -33,21 +32,12 @@ public class PaysController {
     @Autowired
     private IPayMethods iPayMethod;
 
-    @GetMapping("/get")
-    public String get() {
-
-//        TransactionDTO transactionDTO = new TransactionDTO();
-//
-//        transactionDTO.setAmount_in_cents(500000);
-//        transactionDTO.setCurrency("COP");
-//        transactionDTO.setInstallments(2);
-//        transactionDTO.setReference("2322er3234ed4");
-//        transactionDTO.setPayment_source_id(42402);
-//
-//        JsonNode pm = iWompiService.CreateTransaction(transactionDTO);
-//
-//        return pm;
-        return "";
+    @GetMapping("/status/transaction/{transactionId}")
+    public String get(@PathVariable String transactionId) {
+        
+        String statusTransaction = iWompiService.seeStatusTransaction(transactionId);
+       
+        return "The transaction was " + statusTransaction;
     }
 
     @SuppressWarnings("unused")
@@ -78,7 +68,7 @@ public class PaysController {
             PayMethod payMethod = iPayMethod.savePayMethod(payMethodDTO, payMethodDTOCreated.get("id").asInt(),
                     payMethodDTOCreated.get("status").asText(), user);
 
-            response = payMethodDTOCreated.get("id").asText();
+            response = "Number of pay method is " +  payMethodDTOCreated.get("id").asText();
 
         } catch (RuntimeException e) {
             response = e.getMessage();
