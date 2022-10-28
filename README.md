@@ -8,9 +8,15 @@ To run the projecto you should:
 2. You open the project with Eclipse, Netbeans, Intellij or Sprongboot tools. These IDEs are special IDEs to java applications. 
 
 3. Before you run the project, you should create the database, from the database manage that you prefer and run the next lines of code:
+
+
       CREATE SCHEMA `db_ride_hailing`;
+      
+      
       INSERT INTO db_ride_hailing.pay_methods (id, customer_email, status, token, type, create_at) VALUES(42564, 'danielaja7@gmail.com','', 'tok_test_27257_a410674e110b554dfedece325C140f1d', 'CARD', NOW());
       INSERT INTO db_ride_hailing.users (firstname, lastname, email, phone, role, status, pay_method_id,  birthday_date, create_at) VALUES('Daniel', 'Jaramillo', 'danielja7@gmail.com', '3014510118', 'rider', '', 42564, '2017-08-01', '2017-08-01');
+      
+      
       INSERT INTO db_ride_hailing.users (firstname, lastname, email, phone, role, status, birthday_date, last_service, create_at) VALUES('Daniela', 'Osorio', 'jedagos1409@gmail.com', '3014510118', 'driver', 'free', '2017-08-01', NOW(),  '2017-08-01');
    With these lines of code, you will create the database and add the first test data.
    
@@ -69,3 +75,5 @@ IMPORTANT THINGS
     spring.datasource.username=
     spring.datasource.password=
 2. There is a user with a pay method in the database, but if you want test with other values, you should tokenize a card and after you can create a pay method with the en point "Create pay method"
+
+3. The project has some unit test. 
